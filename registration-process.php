@@ -1,7 +1,7 @@
 <?php
 // Ensure the request came via POST
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    header("Location: register.html");
+    header("Location: registration.html");
     exit();
 }
 
@@ -166,7 +166,7 @@ $generatedUsername = strtolower($fPart . $lPart . $birthYear . '_' . $ePart . $a
 
                 <!-- Modal Footer Actions -->
                 <div class="modal-footer bg-light">
-                    <a href="register.html" class="btn btn-outline-secondary">Register Another Account</a>
+                    <a href="registration.html" class="btn btn-outline-secondary">Register Another Account</a>
                     <a href="index.html" class="btn btn-primary" style="background-color: #0284c7; border-color: #0284c7;">Back to Home Page</a>
                 </div>
 
