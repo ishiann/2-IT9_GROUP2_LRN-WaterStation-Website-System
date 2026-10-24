@@ -172,11 +172,11 @@ document.addEventListener("DOMContentLoaded", function () {
     // ==========================================
     if (registrationForm) {
         registrationForm.addEventListener("submit", function (e) {
-            e.preventDefault();
 
-            // 1. Guard: Age Requirement
+            // 1. Guard: Age Requirement (18+)
             const isAgeEligible = verifyAge();
             if (!isAgeEligible) {
+                e.preventDefault(); // STOP submission
                 alert("Registration rejected: Applicant must be at least 18 years old.");
                 birthDateInput.focus();
                 return;
@@ -186,7 +186,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const password = passwordInput.value;
             const passwordStrength = evaluatePassword(password);
             if (passwordStrength !== "strong") {
-                alert("Password requirement not met: Your password must be rated 'Strong' (At least 8 characters including uppercase, lowercase, a number, and a special character).");
+                e.preventDefault(); // STOP submission
+                alert("Password requirement not met: Your password must be rated 'Strong'.");
                 passwordInput.focus();
                 return;
             }
@@ -194,6 +195,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // 3. Guard: Password Match
             const confirmPassword = confirmPasswordInput.value;
             if (password !== confirmPassword) {
+                e.preventDefault(); // STOP submission
                 alert("Passwords do not match. Please re-enter.");
                 confirmPasswordInput.focus();
                 return;

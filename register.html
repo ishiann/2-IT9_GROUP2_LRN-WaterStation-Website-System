@@ -46,7 +46,7 @@
                     <p class="right-sidebar-subtitle">Please complete the form below to register your water delivery account.</p>
                 </div>
 
-                <form id="registrationForm">
+                <form id="registrationForm" action="registration-process.php" method="POST">
                     
                     <!-- 1. Name Inputs: First Name & Middle Initial -->
                     <div class="form-row">
@@ -136,14 +136,11 @@
                     </div>
 
                     <!-- 8. Checkboxes: Delivery Schedule -->
-                    <div class="form-group">
-                        <label>Preferred Delivery Days / Schedule (Select all that apply) *</label>
-                        <div class="option-grid">
-                            <label class="option-item"><input type="checkbox" name="deliverySchedule" value="Monday & Thursday"> Mon & Thu Schedule</label>
-                            <label class="option-item"><input type="checkbox" name="deliverySchedule" value="Tuesday & Friday"> Tue & Fri Schedule</label>
-                            <label class="option-item"><input type="checkbox" name="deliverySchedule" value="Weekend Bulk"> Weekend Bulk Delivery</label>
-                            <label class="option-item"><input type="checkbox" name="deliverySchedule" value="On-Call / As Needed"> On-Call / Station Pick-up</label>
-                        </div>
+                    <div class="option-grid">
+                        <label class="option-item"><input type="checkbox" name="deliverySchedule[]" value="Monday & Thursday"> Mon & Thu Schedule</label>
+                        <label class="option-item"><input type="checkbox" name="deliverySchedule[]" value="Tuesday & Friday"> Tue & Fri Schedule</label>
+                        <label class="option-item"><input type="checkbox" name="deliverySchedule[]" value="Weekend Bulk"> Weekend Bulk Delivery</label>
+                        <label class="option-item"><input type="checkbox" name="deliverySchedule[]" value="On-Call / As Needed"> On-Call / Station Pick-up</label>
                     </div>
 
                     <!-- 9. Dropdown: Customer Account Type -->
