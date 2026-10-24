@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Registration Page | LRN Purified Drinking Water</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="register-body">
+
+    <div class="register-wrapper">
+        <!-- Top Return Navigation -->
+        <div class="top-home-nav">
+            <a href="index.html" class="back-home-link">&larr; Return to Home Page</a>
+        </div>
+
+        <!-- Split Auth Card Container -->
+        <div class="auth-card register-layout">
+            
+            <!-- Left Sidebar -->
+            <div class="left-sidebar">
+                <div class="sidebar-brand">
+                    <div class="brand-logo-circle">
+                        <img src="images/lrn_logo.png" alt="LRN Purified Drinking Water Logo">
+                    </div>
+                    <h2>LRN PURIFIED WATER</h2>
+                    <h3>"Taste the Difference"</h3>
+                    <p class="college-subtext">Block 1, Lot 24 Palm Hill Subdivision, Palo Alto</p>
+                </div>
+
+                <div class="sidebar-banner">
+                    <h1>Get Fresh Water.</h1>
+                    <p>Create your customer account to schedule doorstep refills, choose preferred container types, and access automated delivery discounts.</p>
+                </div>
+
+                <div class="sidebar-footer">
+                    <p>&copy; 2026 LRN PURIFIED DRINKING WATER</p>
+                </div>
+            </div>
+
+            <!-- Right Sidebar (Registration Form) -->
+            <div class="right-sidebar-form-panel">
+                <div class="right-sidebar-form-header">
+                    <h2 class="right-sidebar-title">CUSTOMER REGISTRATION</h2>
+                    <p class="right-sidebar-subtitle">Please complete the form below to register your water delivery account.</p>
+                </div>
+
+                <form id="registrationForm">
+                    
+                    <!-- 1. Name Inputs: First Name & Middle Initial -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name *</label>
+                            <input type="text" id="firstName" name="firstName" placeholder="e.g. Juan" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="middleInitial">Middle Initial (If applicable)</label>
+                            <input type="text" id="middleInitial" name="middleInitial" maxlength="4" placeholder="e.g. D.">
+                        </div>
+                    </div>
+
+                    <!-- 2. Name Inputs: Last Name & Suffix -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lastName">Last Name *</label>
+                            <input type="text" id="lastName" name="lastName" placeholder="e.g. Dela Cruz" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="suffix">Suffix (If applicable)</label>
+                            <input type="text" id="suffix" name="suffix" placeholder="e.g. Jr., III">
+                        </div>
+                    </div>
+
+                    <!-- 3. Customer ID & Contact Number -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customerId">Customer / Account ID *</label>
+                            <input type="text" id="customerId" name="customerId" placeholder="e.g. LRN-2026-1049" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactNumber">Contact Number *</label>
+                            <input type="tel" id="contactNumber" name="contactNumber" placeholder="e.g. 0992 587 1266" required>
+                        </div>
+                    </div>
+
+                    <!-- 4. Date Input: Birth Date with Age Verification -->
+                    <div class="form-group">
+                        <label for="birthDate">Birth Date *</label>
+                        <input type="date" id="birthDate" name="birthDate" required>
+                        <!-- Age verification status indicator -->
+                        <div id="ageFeedback" class="age-feedback"></div>
+                    </div>
+
+                    <!-- 5. Email Input -->
+                    <div class="form-group">
+                        <label for="email">Personal / Business Email Address *</label>
+                        <input type="email" id="email" name="email" placeholder="e.g. juan.delacruz@email.com" required>
+                    </div>
+
+                    <!-- 6. Password Inputs with Strength System -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="password">Password *</label>
+                            <input type="password" id="password" name="password" placeholder="Create password" required>
+                            
+                            <!-- Password Strength Meter Bar & Label -->
+                            <div id="passwordStrengthContainer" class="password-strength-container" style="display: none;">
+                                <div class="strength-bar-track">
+                                    <div id="strengthBar" class="strength-bar"></div>
+                                </div>
+                                <span id="strengthText" class="strength-text"></span>
+                            </div>
+                            <p class="password-hint">Must be 8+ characters with uppercase, lowercase, a number, and a special character.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password *</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm password" required>
+                        </div>
+                    </div>
+
+                    <!-- 7. Radio Buttons: Preferred Container Type -->
+                    <div class="form-group">
+                        <label>Preferred Container Type (Choose One) *</label>
+                        <div class="option-list">
+                            <label class="option-item">
+                                <input type="radio" name="containerType" value="Round 5-Gallon (Water Dispenser)" checked>
+                                Round 5-Gallon (For Dispensers)
+                            </label>
+                            <label class="option-item">
+                                <input type="radio" name="containerType" value="Slim 5-Gallon (With Faucet)">
+                                Slim 5-Gallon (With Faucet)
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 8. Checkboxes: Delivery Schedule -->
+                    <div class="form-group">
+                        <label>Preferred Delivery Days / Schedule (Select all that apply) *</label>
+                        <div class="option-grid">
+                            <label class="option-item"><input type="checkbox" name="deliverySchedule" value="Monday & Thursday"> Mon & Thu Schedule</label>
+                            <label class="option-item"><input type="checkbox" name="deliverySchedule" value="Tuesday & Friday"> Tue & Fri Schedule</label>
+                            <label class="option-item"><input type="checkbox" name="deliverySchedule" value="Weekend Bulk"> Weekend Bulk Delivery</label>
+                            <label class="option-item"><input type="checkbox" name="deliverySchedule" value="On-Call / As Needed"> On-Call / Station Pick-up</label>
+                        </div>
+                    </div>
+
+                    <!-- 9. Dropdown: Customer Account Type -->
+                    <div class="form-group">
+                        <label for="customerType">Customer Classification *</label>
+                        <select id="customerType" name="customerType" required>
+                            <option value="" disabled selected>-- Select Customer Type --</option>
+                            <option value="Residential (Single Household)">Residential (Single Household)</option>
+                            <option value="Commercial (Office / Workplace)">Commercial (Office / Workplace)</option>
+                            <option value="Retail Reseller (Sari-Sari Store)">Retail Reseller (Sari-Sari Store)</option>
+                            <option value="Institutional (School / Clinic)">Institutional (School / Clinic)</option>
+                        </select>
+                    </div>
+                    <!-- 10. Textarea: Delivery Address & Landmarks -->
+                    <div class="form-group">
+                        <label for="address">Complete Delivery Address & Landmark Notes *</label>
+                        <textarea id="address" name="address" rows="3" placeholder="Enter Block, Lot, Street, Subdivision, and landmark notes for the rider..." required></textarea>
+                    </div>
+
+                    <!-- Terms Agreement -->
+                    <div class="form-group terms-box">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <span>I agree to the LRN water delivery terms, container sanitization guidelines, and swap policy. *</span>
+                        </label>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="button-row">
+                        <button type="submit" class="btn btn-auth-submit">Register Account</button>
+                        <button type="reset" id="btnReset" class="btn btn-auth-reset">Clear Form</button>
+                    </div>
+
+                    <!-- Bottom Switch to Login -->
+                    <div class="right-sidebar-footer-link">
+                        Already have an account? <a href="login.html"><strong>Click here to Log In</strong></a>
+                    </div>
+                </form>
+
+                <!-- Summary Card -->
+                <div id="summaryCard" class="summary-card" style="display: none;">
+                    <h3>Registration Summary</h3>
+                    <p class="summary-subtext">The following customer details were recorded by the dispatch portal:</p>
+                    <div id="summaryContent"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JS Script -->
+    <script src="js/register.js"></script>
+</body>
+</html>
