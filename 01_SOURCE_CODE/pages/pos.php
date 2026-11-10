@@ -1,3 +1,8 @@
+<?php
+// This will kick unauthorized users back to login.html
+require_once '../auth/check_auth.php'; 
+require_once '../config/database.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
