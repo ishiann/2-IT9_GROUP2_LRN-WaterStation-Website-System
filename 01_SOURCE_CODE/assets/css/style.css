@@ -16,7 +16,7 @@ body {
     background-color: #edf2f7;
 
     background: linear-gradient(rgba(11, 37, 69, 0.72), rgba(19, 64, 116, 0.52)), 
-                url('../images/water_background.jpg') no-repeat center center fixed;
+                url('../01_SOURCE_CODE/images/water_background.jpg') no-repeat center center fixed;
     background-size: cover;
     min-height: 100vh;
     
