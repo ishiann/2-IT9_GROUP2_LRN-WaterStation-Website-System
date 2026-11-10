@@ -63,6 +63,16 @@ $totalSales    = $pdo->query("SELECT IFNULL(SUM(total_amount), 0) FROM orders WH
                     <h2 class="fw-bold mb-0">₱<?= number_format($totalSales, 2) ?></h2>
                 </div>
             </div>
+
+            <div class="card p-4 shadow-sm text-center mb-4 border-0" style="background: #e0f2fe;">
+                <h4 class="fw-bold" style="color: #023047;">Ready to process customer orders?</h4>
+                <p class="text-muted">Launch the cashier point of sale terminal to ring up refills, compute change, and issue receipts.</p>
+                <div>
+                    <a href="pos.php" class="btn btn-primary btn-lg px-4 fw-bold" style="background:#0284c7; border-color:#0284c7;">
+                        🛒 Launch Cashier POS Terminal
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </body>

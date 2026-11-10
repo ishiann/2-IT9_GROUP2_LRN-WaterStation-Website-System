@@ -22,7 +22,7 @@ require_once '../config/database.php';
                 <img src="images/lrn_logo.png" alt="LRN Logo" class="pos-logo">
                 <div>
                     <h2>LRN PURIFIED WATER &bull; POS TERMINAL</h2>
-                    <p>Station Cashier: <strong id="cashierName">Staff On Duty</strong> | Palm Hill Subd. Branch</p>
+                    <p>Station Cashier: <strong><?= htmlspecialchars($_SESSION['full_name']) ?></strong> | Palm Hill Subd. Branch</p>
                 </div>
             </div>
             <div class="pos-nav-actions">
