@@ -39,50 +39,52 @@
           <div class="form-section">
               <div class="forms">
 
-                 <form id="customerLoginForm" class="login-form" onsubmit="window.location.href='pos.html'; return false;">
-                    
-                      <h2>CUSTOMER LOG IN</h2>
-                      <p class="subtitle">Welcome back! Please enter your account credentials.</p>
+                 <form id="customerLoginForm" class="login-form" action="auth/login-auth.php" method="POST">
+    
+                    <h2>CUSTOMER LOG IN</h2>
+                    <p class="subtitle">Welcome back! Please enter your account credentials.</p>
 
-                      <!-- 1. Email or Username -->
-                      <label for="loginUser">Email or Generated Username</label>
-                      <input
-                          type="text"
-                          id="loginUser"
-                          placeholder="e.g. jasgar1999_ja27 or juan@email.com"
-                          required
-                      >
+                    <!-- 1. Username / Email (Needs name="customerUser") -->
+                    <label for="customerUser">Email or Generated Username</label>
+                    <input
+                        type="text"
+                        id="customerUser"
+                        name="customerUser"
+                        placeholder="e.g. jasgar1999_ja27 or juan@email.com"
+                        required
+                    >
 
-                      <!-- 2. Password -->
-                      <label for="loginPass">Password</label>
-                      <input
-                          type="password"
-                          id="loginPass"
-                          placeholder="Enter your account password"
-                          required
-                      >
+                    <!-- 2. Password (Needs name="customerPassword") -->
+                    <label for="customerPassword">Password</label>
+                    <input
+                        type="password"
+                        id="customerPassword"
+                        name="customerPassword"
+                        placeholder="Enter your account password"
+                        required
+                    >
 
-                      <!-- 3. Remember Me & Forgot Password -->
-                      <div class="login-options">
-                          <label class="remember">
-                              <input type="checkbox">
-                              Remember me
-                          </label>
-                          <a href="#">Forgot password?</a>
-                      </div>
+                    <!-- 3. Remember Me -->
+                    <div class="login-options">
+                        <label class="remember">
+                            <input type="checkbox" name="rememberMe">
+                            Remember me
+                        </label>
+                        <a href="#">Forgot password?</a>
+                    </div>
 
-                      <!-- 4. Login Button -->
-                      <button class="main-button" type="submit">
-                          Log In
-                      </button>
+                    <!-- 4. Login Button -->
+                    <button class="main-button" type="submit">
+                        Log In
+                    </button>
 
-                      <!-- 5. Registration Link -->
-                      <p class="switch-text">
-                          Don't have an account yet?
-                          <a href="registration.html" class="switch-link">Click here to Register / Order</a>
-                      </p>
+                    <!-- 5. Register Link -->
+                    <p class="switch-text">
+                        Don't have an account yet?
+                        <a href="registration.html" class="switch-link">Click here to Register / Order</a>
+                    </p>
 
-                  </form>
+                </form>
 
               </div>
           </div>

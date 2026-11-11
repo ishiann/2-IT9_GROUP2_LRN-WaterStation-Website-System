@@ -1,7 +1,16 @@
 <?php
-// This will kick unauthorized users back to login.html
-require_once '../auth/check_auth.php'; 
-require_once '../config/database.php';
+session_start();
+
+// 1. Kick unauthorized users back to login.html in root
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../login.html?error=unauthorized");
+    exit();
+}
+
+// 2. Connect to database
+if (file_exists('../config/database.php')) {
+    require_once '../config/database.php';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -9,8 +18,8 @@ require_once '../config/database.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cashier POS Terminal | LRN Purified Drinking Water</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/pos.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/pos.css">
 </head>
 
 <body class="pos-body">
@@ -19,14 +28,14 @@ require_once '../config/database.php';
     <header class="pos-header">
         <div class="pos-header-inner">
             <div class="pos-brand">
-                <img src="images/lrn_logo.png" alt="LRN Logo" class="pos-logo">
+                <img src="../images/lrn_logo.png" alt="LRN Logo" class="pos-logo">
                 <div>
                     <h2>LRN PURIFIED WATER &bull; POS TERMINAL</h2>
                     <p>Station Cashier: <strong><?= htmlspecialchars($_SESSION['full_name']) ?></strong> | Palm Hill Subd. Branch</p>
                 </div>
             </div>
             <div class="pos-nav-actions">
-                <a href="index.html" class="pos-exit-btn">&larr; Exit to Home</a>
+                <a href="../index.html" class="pos-exit-btn">&larr; Exit to Home</a>
             </div>
         </div>
     </header>
@@ -177,6 +186,6 @@ require_once '../config/database.php';
     </div>
 
     <!-- Scripts -->
-    <script src="js/pos.js"></script>
+    <script src="../assets/js/pos.js"></script>
 </body>
 </html>

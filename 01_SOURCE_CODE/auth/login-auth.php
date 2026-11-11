@@ -1,6 +1,8 @@
 <?php
 // auth/login-auth.php
 session_start();
+
+// Connect to database (stepping out to root, then into config/)
 require_once '../config/database.php';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -11,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         die("Please fill in all fields.");
     }
 
-    // Find user by username or email
+    // Find user in MySQL by username or email
     $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? OR email = ? LIMIT 1");
     $stmt->execute([$identifier, $identifier]);
     $user = $stmt->fetch();
@@ -23,9 +25,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $_SESSION['role']      = $user['role'];
         $_SESSION['username']  = $user['username'];
 
-        header("Location: ../pages/dashboard.php");
+        // STEP OUT OF auth/ INTO pages/pos.php
+        header("Location: ../pages/pos.php");
         exit();
     } else {
+        // STEP OUT OF auth/ BACK TO login.html
         echo "<script>alert('Invalid username or password!'); window.location.href='../login.html';</script>";
         exit();
     }
