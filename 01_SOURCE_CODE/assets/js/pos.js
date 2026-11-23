@@ -3,21 +3,17 @@
    ========================================================== */
 
 document.addEventListener("DOMContentLoaded", function () {
-
-    // 1. Water Station Products & Services (Philippine Peso ₱)
-    const products = [
-        { id: "P1", name: "Round 5-Gal Refill", price: 30.00, icon: "💧" },
-        { id: "P2", name: "Slim 5-Gal Refill", price: 35.00, icon: "🚰" },
-        { id: "P3", name: "Brand New Round + Water", price: 220.00, icon: "🔵" },
-        { id: "P4", name: "Brand New Slim + Water", price: 250.00, icon: "🟦" },
-        { id: "P5", name: "Bottled Water 500ml (24s Box)", price: 180.00, icon: "📦" },
-        { id: "P6", name: "Replacement Faucet Spigot", price: 30.00, icon: "🔧" },
-        { id: "P7", name: "Non-Spill Dispenser Cap", price: 15.00, icon: "🔘" }
-    ];
+    const icons = { P1: "💧", P2: "🚰", P3: "🔵", P4: "🟦", P5: "📦", P6: "🔧", P7: "🔘" };
+    const products = (window.LRN_PRODUCTS || []).map(p => ({
+        id: p.item_code,
+        name: p.item_name,
+        price: parseFloat(p.price),
+        stock: parseInt(p.stock_qty, 10) || 0,
+        icon: icons[p.item_code] || "💧"
+    }));
 
     let cart = [];
 
-    // DOM Elements
     const productGrid = document.getElementById("productGrid");
     const cartTableBody = document.getElementById("cartTableBody");
     const dispSubtotal = document.getElementById("dispSubtotal");
@@ -28,31 +24,44 @@ document.addEventListener("DOMContentLoaded", function () {
     const posOrderType = document.getElementById("posOrderType");
     const posCustomerName = document.getElementById("posCustomerName");
     const posPaymentMethod = document.getElementById("posPaymentMethod");
+    const posContactNumber = document.getElementById("posContactNumber");
+    const posDeliveryAddress = document.getElementById("posDeliveryAddress");
+    const deliveryFields = document.getElementById("deliveryFields");
     const btnProcessPayment = document.getElementById("btnProcessPayment");
     const btnClearCart = document.getElementById("btnClearCart");
-
-    // Modal Elements
     const receiptModal = document.getElementById("receiptModal");
     const btnCloseReceipt = document.getElementById("btnCloseReceipt");
 
-    // 2. Render Product Catalog
     function renderCatalog() {
+        if (products.length === 0) {
+            productGrid.innerHTML = "<p>No active products found. Add products in Products (CRUD).</p>";
+            return;
+        }
         productGrid.innerHTML = products.map(item => `
-            <div class="product-card" onclick="addToCart('${item.id}')">
+            <div class="product-card" style="${item.stock <= 0 ? 'opacity:0.5; cursor:not-allowed;' : ''}"
+                 onclick="addToCart('${item.id}')">
                 <div class="product-icon">${item.icon}</div>
                 <div class="product-name">${item.name}</div>
                 <div class="product-price">₱${item.price.toFixed(2)}</div>
+                <div style="font-size:11.5px; color:${item.stock > 0 ? '#64748b' : '#dc2626'}; margin-top:4px;">
+                    ${item.stock > 0 ? `Stock: ${item.stock}` : 'Out of Stock'}
+                </div>
             </div>
         `).join("");
     }
 
-    // 3. Add Item to Cart
     window.addToCart = function (productId) {
         const item = products.find(p => p.id === productId);
-        if (!item) return;
-
+        if (!item || item.stock <= 0) {
+            alert("This product is out of stock.");
+            return;
+        }
         const existing = cart.find(c => c.id === productId);
         if (existing) {
+            if (existing.qty >= item.stock) {
+                alert(`Only ${item.stock} left in stock for ${item.name}.`);
+                return;
+            }
             existing.qty += 1;
         } else {
             cart.push({ ...item, qty: 1 });
@@ -60,10 +69,15 @@ document.addEventListener("DOMContentLoaded", function () {
         updateCartUI();
     };
 
-    // 4. Update Quantity (+ / -)
     window.changeQty = function (productId, delta) {
         const item = cart.find(c => c.id === productId);
+        const prod = products.find(p => p.id === productId);
         if (!item) return;
+
+        if (delta > 0 && prod && item.qty >= prod.stock) {
+            alert(`Only ${prod.stock} left in stock for ${item.name}.`);
+            return;
+        }
 
         item.qty += delta;
         if (item.qty <= 0) {
@@ -72,18 +86,28 @@ document.addEventListener("DOMContentLoaded", function () {
         updateCartUI();
     };
 
-    // 5. Remove Item
     window.removeItem = function (productId) {
         cart = cart.filter(c => c.id !== productId);
         updateCartUI();
     };
 
-    // 6. Calculate Totals & Change
+    function toggleDeliveryFields() {
+        const isDelivery = posOrderType.value === "Home Delivery";
+        deliveryFields.style.display = isDelivery ? "block" : "none";
+    }
+
     function calculateTotals() {
         const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-        // Delivery is ₱10 flat rate if delivery is chosen; free for walk-in
-        const deliveryFee = (posOrderType.value === "Home Delivery" && cart.length > 0) ? 10.00 : 0.00;
+        const isDelivery = posOrderType.value === "Home Delivery";
+        const deliveryFee = (isDelivery && cart.length > 0) ? 10.00 : 0.00;
         const total = subtotal + deliveryFee;
+
+        if (posPaymentMethod.value === "GCash") {
+            posCashTendered.value = total.toFixed(2);
+            posCashTendered.readOnly = true;
+        } else {
+            posCashTendered.readOnly = false;
+        }
 
         const cash = parseFloat(posCashTendered.value) || 0;
         const change = cash - total;
@@ -91,31 +115,26 @@ document.addEventListener("DOMContentLoaded", function () {
         dispSubtotal.textContent = `₱${subtotal.toFixed(2)}`;
         dispDelivery.textContent = `₱${deliveryFee.toFixed(2)}`;
         dispTotal.textContent = `₱${total.toFixed(2)}`;
+        dispChange.textContent = (change >= 0 && total > 0) ? `₱${change.toFixed(2)}` : `₱0.00`;
 
-        if (change >= 0 && total > 0) {
-            dispChange.textContent = `₱${change.toFixed(2)}`;
-            dispChange.parentElement.style.color = "#15803d";
-        } else {
-            dispChange.textContent = `₱0.00`;
-        }
-
-        // Enable button only if cart has items, customer name exists, and cash is sufficient
         const isCashSufficient = posPaymentMethod.value === "GCash" || cash >= total;
         const hasCustomer = posCustomerName.value.trim().length > 0;
+        const hasDeliveryDetails = !isDelivery || (
+            posContactNumber.value.trim().length > 0 &&
+            posDeliveryAddress.value.trim().length > 0
+        );
 
-        btnProcessPayment.disabled = !(cart.length > 0 && isCashSufficient && hasCustomer);
+        btnProcessPayment.disabled = !(cart.length > 0 && isCashSufficient && hasCustomer && hasDeliveryDetails);
 
         return { subtotal, deliveryFee, total, cash, change };
     }
 
-    // 7. Update Cart Table UI
     function updateCartUI() {
         if (cart.length === 0) {
             cartTableBody.innerHTML = `
                 <tr class="empty-cart-row">
                     <td colspan="5">No items selected yet. Click products to add.</td>
-                </tr>
-            `;
+                </tr>`;
         } else {
             cartTableBody.innerHTML = cart.map(item => `
                 <tr>
@@ -131,20 +150,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 </tr>
             `).join("");
         }
-
         calculateTotals();
     }
 
-    // 8. Event Listeners
     posCashTendered.addEventListener("input", calculateTotals);
-    posOrderType.addEventListener("change", calculateTotals);
     posCustomerName.addEventListener("input", calculateTotals);
-    posPaymentMethod.addEventListener("change", function () {
-        if (posPaymentMethod.value === "GCash") {
-            posCashTendered.value = calculateTotals().total;
-        }
+    posContactNumber.addEventListener("input", calculateTotals);
+    posDeliveryAddress.addEventListener("input", calculateTotals);
+    posOrderType.addEventListener("change", function () {
+        toggleDeliveryFields();
         calculateTotals();
     });
+    posPaymentMethod.addEventListener("change", calculateTotals);
 
     btnClearCart.addEventListener("click", function () {
         if (confirm("Clear all items in the current transaction?")) {
@@ -154,20 +171,67 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // 9. Process Payment & Build Receipt
-    btnProcessPayment.addEventListener("click", function () {
-        const { subtotal, deliveryFee, total, cash, change } = calculateTotals();
+    btnProcessPayment.addEventListener("click", async function () {
+        let { subtotal, deliveryFee, total, cash, change } = calculateTotals();
 
-        const receiptNo = "LRN-" + Math.floor(100000 + Math.random() * 900000);
-        const now = new Date().toLocaleString();
+        btnProcessPayment.disabled = true;
+        const originalLabel = btnProcessPayment.textContent;
+        btnProcessPayment.textContent = "Saving order...";
+
+        let receiptNo;
+        try {
+            const response = await fetch("save-order.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    customerName: posCustomerName.value.trim(),
+                    orderType: posOrderType.value,
+                    paymentMethod: posPaymentMethod.value,
+                    contactNumber: posContactNumber.value.trim(),
+                    deliveryAddress: posDeliveryAddress.value.trim(),
+                    items: cart.map(i => ({ id: i.id, qty: i.qty }))
+                })
+            });
+            const result = await response.json();
+
+            if (response.status === 401) {
+                alert("Your session expired. Please log in again.");
+                window.location.href = "../login.php";
+                return;
+            }
+            if (!result.success) {
+                alert("Order was NOT saved: " + (result.message || "Unknown error."));
+                btnProcessPayment.textContent = originalLabel;
+                calculateTotals();
+                return;
+            }
+
+            receiptNo = result.order_code;
+            subtotal = result.subtotal;
+            deliveryFee = result.delivery_fee;
+            total = result.total;
+            change = cash - total;
+
+            // Update local stock display
+            cart.forEach(c => {
+                const prod = products.find(p => p.id === c.id);
+                if (prod) prod.stock = Math.max(0, prod.stock - c.qty);
+            });
+            renderCatalog();
+        } catch (err) {
+            alert("Could not reach the server. The order was NOT saved.");
+            btnProcessPayment.textContent = originalLabel;
+            calculateTotals();
+            return;
+        }
+        btnProcessPayment.textContent = originalLabel;
 
         document.getElementById("recNo").textContent = receiptNo;
-        document.getElementById("recDate").textContent = now;
+        document.getElementById("recDate").textContent = new Date().toLocaleString();
         document.getElementById("recCustomer").textContent = posCustomerName.value.trim();
         document.getElementById("recOrderType").textContent = posOrderType.value;
         document.getElementById("recPayMode").textContent = posPaymentMethod.value;
 
-        // Populate items in receipt
         document.getElementById("recItemsList").innerHTML = cart.map(i => `
             <div class="receipt-row">
                 <span>${i.qty}x ${i.name}</span>
@@ -181,19 +245,19 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("recPaid").textContent = `₱${cash.toFixed(2)}`;
         document.getElementById("recChange").textContent = `₱${Math.max(0, change).toFixed(2)}`;
 
-        // Show Modal
         receiptModal.style.display = "flex";
     });
 
-    // Close Receipt & Reset for Next Customer
     btnCloseReceipt.addEventListener("click", function () {
         receiptModal.style.display = "none";
         cart = [];
         posCustomerName.value = "";
+        posContactNumber.value = "";
+        posDeliveryAddress.value = "";
         posCashTendered.value = "";
         updateCartUI();
     });
 
-    // Init
+    toggleDeliveryFields();
     renderCatalog();
 });

@@ -1,79 +1,114 @@
 <?php
-// pages/dashboard.php
 require_once '../auth/check_auth.php';
+requireAdmin();
 require_once '../config/database.php';
 
-// Fetch summary metrics
-$totalProducts = $pdo->query("SELECT COUNT(*) FROM products WHERE status='Active'")->fetchColumn();
-$totalOrders   = $pdo->query("SELECT COUNT(*) FROM orders")->fetchColumn();
-$pendingOrders = $pdo->query("SELECT COUNT(*) FROM orders WHERE status='Pending'")->fetchColumn();
-$totalSales    = $pdo->query("SELECT IFNULL(SUM(total_amount), 0) FROM orders WHERE status='Delivered'")->fetchColumn();
+$activeProducts = (int)$pdo->query("SELECT COUNT(*) FROM products WHERE status = 'Active'")->fetchColumn();
+$lowStock       = (int)$pdo->query("SELECT COUNT(*) FROM products WHERE status = 'Active' AND stock_qty <= 10")->fetchColumn();
+$pendingOrders  = (int)$pdo->query("SELECT COUNT(*) FROM orders WHERE status IN ('Pending', 'Out for Delivery')")->fetchColumn();
+$totalSales     = (float)$pdo->query("SELECT COALESCE(SUM(total_amount), 0) FROM orders WHERE status = 'Completed'")->fetchColumn();
+
+$recentOrders = $pdo->query(
+    "SELECT order_code, customer_name, order_type, total_amount, status, created_at
+     FROM orders ORDER BY created_at DESC LIMIT 5"
+)->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Station Dashboard | LRN Purified Water</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | LRN Purified Drinking Water</title>
+    <link rel="stylesheet" href="../assets/css/portal.css">
 </head>
-<body style="background:#f1f5f9;">
+<body class="portal-body">
 
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background:#023047;">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="#">💧 LRN WATER POS & MANAGEMENT</a>
-            <div class="d-flex align-items-center text-white gap-3">
-                <span>Welcome, <strong><?= htmlspecialchars($_SESSION['full_name']) ?></strong> (<?= ucfirst($_SESSION['role']) ?>)</span>
-                <a href="../auth/logout.php" class="btn btn-outline-light btn-sm">Log Out</a>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container my-4">
-        <!-- Navigation Bar for Internal Modules -->
-        <div class="d-flex gap-2 mb-4">
-            <a href="dashboard.php" class="btn btn-primary active">Dashboard</a>
-            <a href="products.php" class="btn btn-outline-primary">Manage Products (CRUD)</a>
-            <a href="transactions.php" class="btn btn-outline-primary">Process Orders (Transactions)</a>
-        </div>
-
-        <!-- Metric Counter Cards -->
-        <div class="row g-3 mb-4">
-            <div class="col-md-3">
-                <div class="card p-3 shadow-sm border-start border-4 border-primary">
-                    <h6 class="text-muted">Active Products</h6>
-                    <h2 class="fw-bold mb-0"><?= $totalProducts ?></h2>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card p-3 shadow-sm border-start border-4 border-info">
-                    <h6 class="text-muted">Total Orders</h6>
-                    <h2 class="fw-bold mb-0"><?= $totalOrders ?></h2>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card p-3 shadow-sm border-start border-4 border-warning">
-                    <h6 class="text-muted">Pending Deliveries</h6>
-                    <h2 class="fw-bold mb-0"><?= $pendingOrders ?></h2>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card p-3 shadow-sm border-start border-4 border-success">
-                    <h6 class="text-muted">Completed Sales</h6>
-                    <h2 class="fw-bold mb-0">₱<?= number_format($totalSales, 2) ?></h2>
-                </div>
-            </div>
-
-            <div class="card p-4 shadow-sm text-center mb-4 border-0" style="background: #e0f2fe;">
-                <h4 class="fw-bold" style="color: #023047;">Ready to process customer orders?</h4>
-                <p class="text-muted">Launch the cashier point of sale terminal to ring up refills, compute change, and issue receipts.</p>
+    <header class="portal-header">
+        <div class="portal-header-inner">
+            <div class="portal-brand">
+                <img src="../images/lrn_logo.png" alt="LRN Logo" class="portal-logo">
                 <div>
-                    <a href="pos.php" class="btn btn-primary btn-lg px-4 fw-bold" style="background:#0284c7; border-color:#0284c7;">
-                        🛒 Launch Cashier POS Terminal
-                    </a>
+                    <h2>LRN PURIFIED WATER &bull; ADMIN DASHBOARD</h2>
+                    <p>Logged in as: <strong><?= htmlspecialchars($_SESSION['full_name'] ?? 'Admin', ENT_QUOTES, 'UTF-8') ?></strong> (Admin)</p>
                 </div>
             </div>
+            <nav class="portal-nav">
+                <a href="dashboard.php" class="active">Dashboard</a>
+                <a href="products.php">Products (CRUD)</a>
+                <a href="orders.php">Orders</a>
+                <a href="../auth/logout.php" class="btn-logout">Log Out</a>
+            </nav>
         </div>
-    </div>
+    </header>
+
+    <main class="portal-container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Active Products</div>
+                <div class="stat-value"><?= $activeProducts ?></div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-label">Low Stock Items (&le; 10)</div>
+                <div class="stat-value"><?= $lowStock ?></div>
+            </div>
+            <div class="stat-card navy">
+                <div class="stat-label">Pending / Active Orders</div>
+                <div class="stat-value"><?= $pendingOrders ?></div>
+            </div>
+            <div class="stat-card success">
+                <div class="stat-label">Completed Sales</div>
+                <div class="stat-value">&#8369;<?= number_format($totalSales, 2) ?></div>
+            </div>
+        </div>
+
+        <div class="panel-card">
+            <div class="panel-header">
+                <h3>Quick Navigation</h3>
+            </div>
+            <div class="action-row">
+                <a href="pos.php" class="btn-primary">Open Cashier POS</a>
+                <a href="products.php" class="btn-secondary">Manage Products &amp; Stock</a>
+                <a href="orders.php" class="btn-secondary">View &amp; Update Orders</a>
+            </div>
+        </div>
+
+        <div class="panel-card">
+            <div class="panel-header">
+                <h3>Recent Transactions</h3>
+                <a href="orders.php" class="btn-primary">View All Orders &rarr;</a>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Order Code</th>
+                            <th>Customer</th>
+                            <th>Order Type</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php if (empty($recentOrders)): ?>
+                        <tr><td colspan="6">No orders recorded yet.</td></tr>
+                    <?php else: ?>
+                        <?php foreach ($recentOrders as $o): ?>
+                        <?php $badge = 'badge-' . strtolower(str_replace(' ', '-', $o['status'])); ?>
+                        <tr>
+                            <td><strong><?= htmlspecialchars($o['order_code']) ?></strong></td>
+                            <td><?= htmlspecialchars($o['customer_name']) ?></td>
+                            <td><?= htmlspecialchars($o['order_type']) ?></td>
+                            <td>&#8369;<?= number_format((float)$o['total_amount'], 2) ?></td>
+                            <td><span class="badge <?= $badge ?>"><?= htmlspecialchars($o['status']) ?></span></td>
+                            <td><?= htmlspecialchars($o['created_at']) ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
 </body>
 </html>

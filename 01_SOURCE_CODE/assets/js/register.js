@@ -201,7 +201,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            // 4. Retrieve Customer Details (Renamed Variables)
+            // 4. Retrieve Customer Details
             const firstName = document.getElementById("firstName").value.trim();
             const middleInitial = document.getElementById("middleInitial").value.trim();
             const lastName = document.getElementById("lastName").value.trim();
@@ -221,16 +221,6 @@ document.addEventListener("DOMContentLoaded", function () {
             const contactNumber = document.getElementById("contactNumber").value.trim();
             const birthDate = birthDateInput.value;
             const email = document.getElementById("email").value.trim();
-
-            // Container Type (Formerly 'program')
-            const containerType = document.querySelector('input[name="containerType"]:checked')?.value || "N/A";
-
-            // Delivery Schedules (Formerly 'interests')
-            const selectedSchedules = Array.from(document.querySelectorAll('input[name="deliverySchedule"]:checked'))
-                .map(cb => cb.value)
-                .join(", ") || "None selected";
-
-            // Customer Type (Formerly 'yearLevel')
             const customerType = document.getElementById("customerType").value;
             const deliveryAddress = document.getElementById("address").value.trim();
             const termsAccepted = document.getElementById("terms").checked ? "Yes" : "No";
@@ -265,14 +255,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     <tr>
                         <th>Email Address</th>
                         <td>${email}</td>
-                    </tr>
-                    <tr>
-                        <th>Preferred Container</th>
-                        <td>${containerType}</td>
-                    </tr>
-                    <tr>
-                        <th>Delivery Schedule</th>
-                        <td>${selectedSchedules}</td>
                     </tr>
                     <tr>
                         <th>Customer Classification</th>

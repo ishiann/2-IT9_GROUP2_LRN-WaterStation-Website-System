@@ -1,3 +1,14 @@
+<?php
+session_start();
+if (isset($_SESSION['user_id'])) {
+    if (($_SESSION['role'] ?? '') === 'admin') {
+        header("Location: pages/dashboard.php");
+    } else {
+        header("Location: pages/customer-portal.php");
+    }
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +23,7 @@
     <div class="register-wrapper">
         <!-- Top Return Navigation -->
         <div class="top-home-nav">
-            <a href="index.html" class="back-home-link">&larr; Return to Home Page</a>
+            <a href="index.php" class="back-home-link">&larr; Return to Home Page</a>
         </div>
 
         <!-- Split Auth Card Container -->
@@ -31,7 +42,7 @@
 
                 <div class="sidebar-banner">
                     <h1>Get Fresh Water.</h1>
-                    <p>Create your customer account to schedule doorstep refills, choose preferred container types, and access automated delivery discounts.</p>
+                    <p>Create your customer account to schedule doorstep refills and access automated delivery discounts.</p>
                 </div>
 
                 <div class="sidebar-footer">
@@ -120,30 +131,7 @@
                         </div>
                     </div>
 
-                    <!-- 7. Radio Buttons: Preferred Container Type -->
-                    <div class="form-group">
-                        <label>Preferred Container Type (Choose One) *</label>
-                        <div class="option-list">
-                            <label class="option-item">
-                                <input type="radio" name="containerType" value="Round 5-Gallon (Water Dispenser)" checked>
-                                Round 5-Gallon (For Dispensers)
-                            </label>
-                            <label class="option-item">
-                                <input type="radio" name="containerType" value="Slim 5-Gallon (With Faucet)">
-                                Slim 5-Gallon (With Faucet)
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- 8. Checkboxes: Delivery Schedule -->
-                    <div class="option-grid">
-                        <label class="option-item"><input type="checkbox" name="deliverySchedule[]" value="Monday & Thursday"> Mon & Thu Schedule</label>
-                        <label class="option-item"><input type="checkbox" name="deliverySchedule[]" value="Tuesday & Friday"> Tue & Fri Schedule</label>
-                        <label class="option-item"><input type="checkbox" name="deliverySchedule[]" value="Weekend Bulk"> Weekend Bulk Delivery</label>
-                        <label class="option-item"><input type="checkbox" name="deliverySchedule[]" value="On-Call / As Needed"> On-Call / Station Pick-up</label>
-                    </div>
-
-                    <!-- 9. Dropdown: Customer Account Type -->
+                    <!-- 7. Dropdown: Customer Account Type -->
                     <div class="form-group">
                         <label for="customerType">Customer Classification *</label>
                         <select id="customerType" name="customerType" required>
@@ -154,7 +142,8 @@
                             <option value="Institutional (School / Clinic)">Institutional (School / Clinic)</option>
                         </select>
                     </div>
-                    <!-- 10. Textarea: Delivery Address & Landmarks -->
+
+                    <!-- 8. Textarea: Delivery Address & Landmarks -->
                     <div class="form-group">
                         <label for="address">Complete Delivery Address & Landmark Notes *</label>
                         <textarea id="address" name="address" rows="3" placeholder="Enter Block, Lot, Street, Subdivision, and landmark notes for the rider..." required></textarea>

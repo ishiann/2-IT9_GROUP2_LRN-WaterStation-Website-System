@@ -3,7 +3,7 @@
    ========================================================== */
 
 body.pos-body {
-    background-color: #f1f5f9;
+    background: #f1f5f9;
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #1e293b;
@@ -304,6 +304,11 @@ body.pos-body {
 
 .btn-process-payment:enabled {
     background: #0284c7;
+}
+
+.btn-process-payment:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .btn-process-payment:enabled:hover {
