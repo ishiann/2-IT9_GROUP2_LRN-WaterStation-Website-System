@@ -1,3 +1,14 @@
+<?php
+session_start();
+if (isset($_SESSION['user_id'])) {
+    if (($_SESSION['role'] ?? '') === 'admin') {
+        header("Location: pages/dashboard.php");
+    } else {
+        header("Location: pages/customer-portal.php");
+    }
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +23,7 @@
   <div class="login-wrapper">
       <!-- Return to Landing Page Link-->
       <div class="top-nav-bar">
-          <a href="index.html" class="back-home-link">&#8592; Return to Home Page</a>
+          <a href="index.php" class="back-home-link">&#8592; Return to Home Page</a>
       </div>
 
       <div class="login-card-container">
@@ -39,9 +50,10 @@
           <div class="form-section">
               <div class="forms">
 
-                 <form id="customerLoginForm" class="login-form" onsubmit="window.location.href='pos.html'; return false;">
+                 <form id="customerLoginForm" class="login-form" action="auth/login-process.php" method="POST">
                     
                       <h2>CUSTOMER LOG IN</h2>
+                      <p id="loginError" style="display:none; color:#b91c1c; background:#fee2e2; border:1px solid #fca5a5; padding:8px 12px; border-radius:6px; margin-bottom:10px;"></p>
                       <p class="subtitle">Welcome back! Please enter your account credentials.</p>
 
                       <!-- 1. Email or Username -->
@@ -49,6 +61,7 @@
                       <input
                           type="text"
                           id="loginUser"
+                          name="loginUser"
                           placeholder="e.g. jasgar1999_ja27 or juan@email.com"
                           required
                       >
@@ -58,25 +71,17 @@
                       <input
                           type="password"
                           id="loginPass"
+                          name="loginPass"
                           placeholder="Enter your account password"
                           required
                       >
 
-                      <!-- 3. Remember Me & Forgot Password -->
-                      <div class="login-options">
-                          <label class="remember">
-                              <input type="checkbox">
-                              Remember me
-                          </label>
-                          <a href="#">Forgot password?</a>
-                      </div>
-
-                      <!-- 4. Login Button -->
+                      <!-- 3. Login Button -->
                       <button class="main-button" type="submit">
                           Log In
                       </button>
 
-                      <!-- 5. Registration Link -->
+                      <!-- 4. Registration Link -->
                       <p class="switch-text">
                           Don't have an account yet?
                           <a href="registration.html" class="switch-link">Click here to Register / Order</a>
@@ -91,5 +96,22 @@
 
   </div>
 
+
+    <script>
+      (function () {
+        var msgs = {
+          invalid:  "Incorrect username/email or password.",
+          empty:    "Please enter your username/email and password.",
+          required: "Please log in first to open the ordering page.",
+          server:   "Something went wrong. Please try again."
+        };
+        var code = new URLSearchParams(window.location.search).get("error");
+        if (code && msgs[code]) {
+          var box = document.getElementById("loginError");
+          box.textContent = msgs[code];
+          box.style.display = "block";
+        }
+      })();
+    </script>
 </body>
 </html>

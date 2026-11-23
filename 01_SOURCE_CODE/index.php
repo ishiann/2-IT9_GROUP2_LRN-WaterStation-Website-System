@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,9 +25,18 @@
         <!-- Navigation Links -->
         <nav>
             <ul>
-                <li><a href="index.html" class="active">Home</a></li>
-                <li><a href="login.html" class="nav-btn-login">Login</a></li>
-                <li><a href="registration.html" class="nav-btn-register">Register / Order</a></li>
+                <li><a href="index.php" class="active">Home</a></li>
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <?php if (($_SESSION['role'] ?? '') === 'admin'): ?>
+                        <li><a href="pages/dashboard.php" class="nav-btn-login">Admin Dashboard</a></li>
+                    <?php else: ?>
+                        <li><a href="pages/customer-portal.php" class="nav-btn-login">Customer Portal</a></li>
+                    <?php endif; ?>
+                    <li><a href="auth/logout.php" class="nav-btn-register">Log Out</a></li>
+                <?php else: ?>
+                    <li><a href="login.php" class="nav-btn-login">Login</a></li>
+                    <li><a href="registration.php" class="nav-btn-register">Register / Order</a></li>
+                <?php endif; ?>
             </ul>
         </nav>
     </div>
